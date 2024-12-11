@@ -16,4 +16,11 @@ menu "Metronome"
         help
             WiFi password (WPA or WPA2) for the metronome to use.
 
+    config GPIO_PIN
+        int "GPIO output pin"
+        range 0 33
+        default 12
+        help
+            GPIO pin number to use for output.
+
 endmenu
