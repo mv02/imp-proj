@@ -1,0 +1,19 @@
+# @file Kconfig.projbuild
+# @brief ESP menuconfig options
+# @author Milan Vodák <xvodak07@stud.fit.vut.cz>
+
+menu "Metronome"
+
+    config WIFI_SSID
+        string "WiFi SSID"
+        default "myssid"
+        help
+            SSID (network name) for the metronome to connect to.
+
+    config WIFI_PASSWORD
+        string "WiFi Password"
+        default "mypassword"
+        help
+            WiFi password (WPA or WPA2) for the metronome to use.
+
+endmenu
