@@ -21,6 +21,12 @@ menu "Metronome"
         range 0 33
         default 12
         help
-            GPIO pin number to use for output.
+            Pin number to use for enabling the metronome.
+
+    config PWM_PIN
+        int "PWM output pin"
+        default 13
+        help
+            Pin number to use for regulating metronome volume.
 
 endmenu
