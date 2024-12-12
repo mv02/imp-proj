@@ -16,6 +16,28 @@
 
 static const char* TAG = "http";
 
+static void receive_data(httpd_req_t* req, uint max_len, char* dest)
+{
+    int received = httpd_req_recv(req, dest, MIN(req->content_len, max_len));
+    dest[received] = '\0';
+}
+
+static int receive_int(httpd_req_t* req, uint max_digits)
+{
+    // Receive data
+    char buf[max_digits + 1];
+    receive_data(req, max_digits, buf);
+
+    // Try to convert to integer
+    errno = 0;
+    int num = strtod(buf, NULL);
+    if (errno != 0) {
+        ESP_LOGE(TAG, "integer conversion failed");
+        return ESP_FAIL;
+    }
+    return num;
+}
+
 static esp_err_t hello_handler(httpd_req_t* req)
 {
     httpd_resp_send(req, "Hello world", HTTPD_RESP_USE_STRLEN);
@@ -24,15 +46,8 @@ static esp_err_t hello_handler(httpd_req_t* req)
 
 static esp_err_t set_bpm_patch_handler(httpd_req_t* req)
 {
-    // Receive data
-    char buf[4];
-    int received = httpd_req_recv(req, buf, MIN(req->content_len, sizeof(buf)));
-    buf[received] = '\0';
-
-    // Try to convert to integer
-    errno = 0;
-    int bpm = strtod(buf, NULL);
-    if (errno != 0) {
+    int bpm = receive_int(req, 3);
+    if (bpm < 0) {
         httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Invalid BPM");
         return ESP_FAIL;
     }
