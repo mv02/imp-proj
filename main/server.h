@@ -5,6 +5,6 @@
  */
 
 #define SERVER_BASE_PATH "/www"
-#define SERVER_CHUNK_SIZE 8192
+#define SERVER_CHUNK_SIZE 1024
 
 void server_init();
