@@ -57,6 +57,19 @@ static esp_err_t set_bpm_patch_handler(httpd_req_t* req)
     return ESP_OK;
 }
 
+static esp_err_t set_volume_patch_handler(httpd_req_t* req)
+{
+    int vol = receive_int(req, 3);
+    if (vol < 0 || vol > 100) {
+        httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Invalid volume");
+        return ESP_FAIL;
+    }
+
+    metronome_set_volume(vol);
+    httpd_resp_sendstr(req, "Volume set");
+    return ESP_OK;
+}
+
 static const httpd_uri_t hello = {
     .uri = "/hello",
     .method = HTTP_GET,
@@ -67,6 +80,12 @@ static const httpd_uri_t set_bpm_patch_uri = {
     .uri = "/set-bpm",
     .method = HTTP_PATCH,
     .handler = set_bpm_patch_handler,
+};
+
+static const httpd_uri_t set_volume_patch_uri = {
+    .uri = "/set-volume",
+    .method = HTTP_PATCH,
+    .handler = set_volume_patch_handler,
 };
 
 void server_init()
@@ -80,4 +99,5 @@ void server_init()
     ESP_LOGI(TAG, "Registering URI handlers");
     httpd_register_uri_handler(server, &hello);
     httpd_register_uri_handler(server, &set_bpm_patch_uri);
+    httpd_register_uri_handler(server, &set_volume_patch_uri);
 }
