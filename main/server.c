@@ -71,6 +71,17 @@ static esp_err_t get_handler(httpd_req_t* req)
     strcat(path, req->uri);
     path[path_len] = '\0';
 
+    // Set content type according to the file extension
+    if (IS_EXTENSION(path, ".html")) {
+        httpd_resp_set_type(req, "text/html");
+    } else if (IS_EXTENSION(path, ".js")) {
+        httpd_resp_set_type(req, "text/javascript");
+    } else if (IS_EXTENSION(path, ".css")) {
+        httpd_resp_set_type(req, "text/css");
+    } else {
+        httpd_resp_set_type(req, "text/plain");
+    }
+
     // Try to open the file
     FILE* f = fopen(path, "r");
     if (f == NULL) {
