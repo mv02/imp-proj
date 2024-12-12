@@ -1,17 +1,14 @@
 /**
  * @file metronome.c
- * @brief Program entrypoint
+ * @brief Metronome logic
  * @author Milan Vodák <xvodak07@stud.fit.vut.cz>
  */
 
+#include "metronome.h"
 #include "driver/gpio.h"
-#include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/idf_additions.h"
-#include "nvs_flash.h"
 #include "portmacro.h"
-#include "server.h"
-#include "wifi.h"
 
 static const char* TAG = "metronome";
 
@@ -19,7 +16,7 @@ static int bpm = 200;
 static int period_ms;
 static int beat_length_ms;
 
-static void metronome_init()
+void metronome_init()
 {
     // Calculate period from beats per minute
     period_ms = 60 * 1000 / bpm;
@@ -42,13 +39,8 @@ static void metronome_beat()
     vTaskDelay((period_ms - beat_length_ms) / portTICK_PERIOD_MS);
 }
 
-void app_main()
+void metronome_start()
 {
-    ESP_ERROR_CHECK(nvs_flash_init());
-    wifi_init();
-    server_init();
-
-    metronome_init();
     while (1) {
         metronome_beat();
     }
