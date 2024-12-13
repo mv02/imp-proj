@@ -10,6 +10,7 @@
 #include "esp_log.h"
 #include "esp_spiffs.h"
 #include "http_parser.h"
+#include "mdns.h"
 #include "metronome.h"
 #include "sys/param.h"
 #include <errno.h>
@@ -166,6 +167,9 @@ static const httpd_uri_t set_volume_patch_uri = {
 void server_init()
 {
     fs_init();
+    ESP_ERROR_CHECK(mdns_init());
+    mdns_hostname_set(SERVER_HOSTNAME);
+    mdns_instance_name_set(SERVER_INSTANCE_NAME);
 
     httpd_handle_t server;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();

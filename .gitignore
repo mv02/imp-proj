@@ -2,3 +2,4 @@
 .clangd
 sdkconfig*
 build/
+managed_components/

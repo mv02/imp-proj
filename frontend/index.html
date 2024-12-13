@@ -21,7 +21,7 @@
     <script>
       document.getElementById("bpm").onchange = (e) => {
         console.log(e.target.value);
-        fetch("http://192.168.0.108/set-bpm", {
+        fetch("http://metronome.local/set-bpm", {
           method: "PATCH",
           body: e.target.value,
         })
@@ -31,7 +31,7 @@
 
       document.getElementById("volume").onchange = (e) => {
         console.log(e.target.value);
-        fetch("http://192.168.0.108/set-volume", {
+        fetch("http://metronome.local/set-volume", {
           method: "PATCH",
           body: e.target.value,
         })
