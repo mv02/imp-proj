@@ -61,6 +61,55 @@ static esp_err_t hello_handler(httpd_req_t* req)
     return ESP_OK;
 }
 
+static esp_err_t ws_send_message(httpd_req_t* req, const char* message)
+{
+    httpd_ws_frame_t packet;
+    memset(&packet, 0, sizeof(httpd_ws_frame_t));
+    packet.type = HTTPD_WS_TYPE_TEXT;
+    packet.payload = (uint8_t*)message;
+    packet.len = strlen((char*)packet.payload);
+    return httpd_ws_send_frame(req, &packet);
+}
+
+static esp_err_t ws_handler(httpd_req_t* req)
+{
+    if (req->method == HTTP_GET) {
+        ESP_LOGI(TAG, "ws handshake done");
+        return ESP_OK;
+    }
+
+    httpd_ws_frame_t packet;
+    memset(&packet, 0, sizeof(httpd_ws_frame_t));
+    packet.type = HTTPD_WS_TYPE_TEXT;
+
+    // Set max_len to 0 to get the frame length
+    esp_err_t ret = httpd_ws_recv_frame(req, &packet, 0);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "failed to receive ws frame length");
+        return ret;
+    }
+
+    if (packet.len > 1) {
+        uint8_t* buf = calloc(1, packet.len + 1);
+        packet.payload = buf;
+
+        // Get the frame payload
+        ret = httpd_ws_recv_frame(req, &packet, packet.len);
+        if (ret != ESP_OK) {
+            ESP_LOGE(TAG, "failed to receive ws frame payload");
+            free(buf);
+            return ret;
+        }
+        ESP_LOGI(TAG, "received ws frame: %s", packet.payload);
+        free(buf);
+    }
+
+    // TODO: remove
+    ESP_ERROR_CHECK(ws_send_message(req, "Response"));
+
+    return ESP_OK;
+}
+
 static esp_err_t get_handler(httpd_req_t* req)
 {
     ESP_LOGI(TAG, "uri: %s", req->uri);
@@ -146,6 +195,13 @@ static const httpd_uri_t hello = {
     .handler = hello_handler,
 };
 
+static const httpd_uri_t ws_uri = {
+    .uri = "/ws",
+    .method = HTTP_GET,
+    .handler = ws_handler,
+    .is_websocket = true,
+};
+
 static const httpd_uri_t get_uri = {
     .uri = "/*",
     .method = HTTP_GET,
@@ -180,6 +236,7 @@ void server_init()
 
     ESP_LOGI(TAG, "Registering URI handlers");
     httpd_register_uri_handler(server, &hello);
+    httpd_register_uri_handler(server, &ws_uri);
     httpd_register_uri_handler(server, &get_uri);
     httpd_register_uri_handler(server, &set_bpm_patch_uri);
     httpd_register_uri_handler(server, &set_volume_patch_uri);
