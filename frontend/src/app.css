@@ -1,0 +1,33 @@
+/**
+ * @file app.css
+ * @brief Metronome controls page stylesheet
+ * @author Milan Vodák <xvodak07@stud.fit.vut.cz>
+ */
+
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#app {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.control {
+  @apply flex flex-col gap-4;
+}

@@ -2,42 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Metronome</title>
-    <link href="css/style.css" rel="stylesheet" />
   </head>
   <body>
-    <h1>Metronome</h1>
-
-    <p>
-      <label for="bpm">BPM</label>
-      <input type="number" min="0" max="300" value="120" name="bpm" id="bpm" />
-    </p>
-    <p>
-      <label for="volume">Volume</label>
-      <input type="range" name="volume" id="volume" />
-    </p>
-
-    <script>
-      document.getElementById("bpm").onchange = (e) => {
-        console.log(e.target.value);
-        fetch("http://metronome.local/set-bpm", {
-          method: "PATCH",
-          body: e.target.value,
-        })
-          .then((res) => res.text())
-          .then((data) => console.log(data));
-      };
-
-      document.getElementById("volume").onchange = (e) => {
-        console.log(e.target.value);
-        fetch("http://metronome.local/set-volume", {
-          method: "PATCH",
-          body: e.target.value,
-        })
-          .then((res) => res.text())
-          .then((data) => console.log(data));
-      };
-    </script>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

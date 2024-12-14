@@ -95,6 +95,15 @@ static esp_err_t ws_handler(httpd_req_t* req)
             return ret;
         }
         ESP_LOGI(TAG, "received ws frame: %s", packet.payload);
+
+        if (strncmp((char*)packet.payload, "bpm", 3) == 0) {
+            metronome_set_bpm(strtod((char*)packet.payload + 4, NULL));
+        } else if (strncmp((char*)packet.payload, "vol", 3) == 0) {
+            metronome_set_volume(strtod((char*)packet.payload + 4, NULL));
+        } else if (strncmp((char*)packet.payload, "bts", 3) == 0) {
+            // TODO: set beats
+        }
+
         free(buf);
     }
 
