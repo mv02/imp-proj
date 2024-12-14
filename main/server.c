@@ -55,12 +55,6 @@ static int receive_int(httpd_req_t* req, uint max_digits)
     return num;
 }
 
-static esp_err_t hello_handler(httpd_req_t* req)
-{
-    httpd_resp_send(req, "Hello world", HTTPD_RESP_USE_STRLEN);
-    return ESP_OK;
-}
-
 static esp_err_t ws_send_message(httpd_req_t* req, const char* message)
 {
     httpd_ws_frame_t packet;
@@ -189,12 +183,6 @@ static esp_err_t set_volume_patch_handler(httpd_req_t* req)
     return ESP_OK;
 }
 
-static const httpd_uri_t hello = {
-    .uri = "/hello",
-    .method = HTTP_GET,
-    .handler = hello_handler,
-};
-
 static const httpd_uri_t ws_uri = {
     .uri = "/ws",
     .method = HTTP_GET,
@@ -235,7 +223,6 @@ void server_init()
     ESP_LOGI(TAG, "HTTP server started");
 
     ESP_LOGI(TAG, "Registering URI handlers");
-    httpd_register_uri_handler(server, &hello);
     httpd_register_uri_handler(server, &ws_uri);
     httpd_register_uri_handler(server, &get_uri);
     httpd_register_uri_handler(server, &set_bpm_patch_uri);
