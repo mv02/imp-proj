@@ -17,6 +17,8 @@ static const char* TAG = "metronome";
 
 static int period_ms;
 static int beat_length_ms;
+static int accent_beat_length_ms;
+static int beats;
 
 void pwm_init()
 {
@@ -48,6 +50,7 @@ void metronome_init()
     gpio_set_direction(CONFIG_GPIO_PIN, GPIO_MODE_OUTPUT);
     metronome_set_bpm(DEFAULT_BPM);
     metronome_set_volume(DEFAULT_VOLUME);
+    metronome_set_beats(DEFAULT_BEATS);
 }
 
 void metronome_set_bpm(unsigned int bpm)
@@ -58,7 +61,8 @@ void metronome_set_bpm(unsigned int bpm)
     ESP_LOGI(TAG, "period: %d ms", period_ms);
     // Calculate short enough beat length
     beat_length_ms = period_ms / 4;
-    ESP_LOGI(TAG, "beat length: %d ms", beat_length_ms);
+    accent_beat_length_ms = beat_length_ms * 2;
+    ESP_LOGI(TAG, "beat lengths: %d ms, %d ms", beat_length_ms, accent_beat_length_ms);
 }
 
 void metronome_set_volume(unsigned int volume)
@@ -71,19 +75,29 @@ void metronome_set_volume(unsigned int volume)
     ledc_update_duty(PWM_SPEED_MODE, PWM_CHANNEL);
 }
 
-static void metronome_beat()
+void metronome_set_beats(unsigned int bts)
 {
+    ESP_LOGI(TAG, "setting beats to %d", bts);
+    beats = bts;
+}
+
+static void metronome_beat(bool accent)
+{
+    int beat_len = accent ? accent_beat_length_ms : beat_length_ms;
     // Enable and wait
     gpio_set_level(CONFIG_GPIO_PIN, 1);
-    vTaskDelay(beat_length_ms / portTICK_PERIOD_MS);
+    vTaskDelay(beat_len / portTICK_PERIOD_MS);
     // Disable and wait for the rest of period
     gpio_set_level(CONFIG_GPIO_PIN, 0);
-    vTaskDelay((period_ms - beat_length_ms) / portTICK_PERIOD_MS);
+    vTaskDelay((period_ms - beat_len) / portTICK_PERIOD_MS);
 }
 
 void metronome_start()
 {
     while (1) {
-        metronome_beat();
+        metronome_beat(beats > 1);
+        for (int i = 1; i < beats; i++) {
+            metronome_beat(false);
+        }
     }
 }

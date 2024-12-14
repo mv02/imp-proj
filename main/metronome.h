@@ -6,6 +6,7 @@
 
 #define DEFAULT_BPM 120
 #define DEFAULT_VOLUME 50
+#define DEFAULT_BEATS 4
 
 #define PWM_SPEED_MODE LEDC_HIGH_SPEED_MODE
 #define PWM_CHANNEL LEDC_CHANNEL_0
@@ -18,3 +19,4 @@ void metronome_init();
 void metronome_start();
 void metronome_set_bpm(unsigned int bpm);
 void metronome_set_volume(unsigned int volume);
+void metronome_set_beats(unsigned int beats);

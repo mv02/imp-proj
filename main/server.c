@@ -101,7 +101,7 @@ static esp_err_t ws_handler(httpd_req_t* req)
         } else if (strncmp((char*)packet.payload, "vol", 3) == 0) {
             metronome_set_volume(strtod((char*)packet.payload + 4, NULL));
         } else if (strncmp((char*)packet.payload, "bts", 3) == 0) {
-            // TODO: set beats
+            metronome_set_beats(strtod((char*)packet.payload + 4, NULL));
         }
 
         free(buf);
