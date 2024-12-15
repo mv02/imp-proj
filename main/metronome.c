@@ -105,6 +105,9 @@ void metronome_loop()
 
         metronome_beat(beats > 1);
         for (int i = 1; i < beats; i++) {
+            if (!running) {
+                break;
+            }
             metronome_beat(false);
         }
     }
