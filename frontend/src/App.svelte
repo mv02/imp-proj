@@ -16,18 +16,26 @@
   let beats = 4;
 
   let ws = new WebSocket("http://metronome.local/ws");
-  ws.onopen = () => console.log("WS connected");
-  ws.onclose = () => console.log("WS disconnected");
+  ws.onopen = () => {
+    wsOpen = true;
+    console.log("WS connected");
+  };
+  ws.onclose = () => {
+    wsOpen = false;
+    console.log("WS disconnected");
+  };
 
-  $: if (ws && ws.readyState === WebSocket.OPEN) {
+  let wsOpen = ws.readyState === WebSocket.OPEN;
+
+  $: if (wsOpen) {
     ws.send(`bpm:${bpm}`);
   }
 
-  $: if (ws && ws.readyState === WebSocket.OPEN) {
+  $: if (wsOpen) {
     ws.send(`vol:${volume}`);
   }
 
-  $: if (ws && ws.readyState === WebSocket.OPEN) {
+  $: if (wsOpen) {
     ws.send(`bts:${beats}`);
   }
 
@@ -47,15 +55,20 @@
 <div class="grid grid-cols-2 grid-rows-2 items-end gap-8">
   <div id="bpm-control" class="control col-span-2">
     <Dial label="BPM" value={bpm} />
-    <Range size="lg" min="50" max="250" bind:value={bpm} />
+    <Range size="lg" min="50" max="250" disabled={!wsOpen} bind:value={bpm} />
 
     <div class="flex justify-between">
       <ButtonGroup>
-        <Button on:click={() => volumeDec(10)}>-10</Button>
-        <Button on:click={() => volumeDec(1)}>-1</Button>
+        <Button disabled={!wsOpen} on:click={() => volumeDec(10)}>-10</Button>
+        <Button disabled={!wsOpen} on:click={() => volumeDec(1)}>-1</Button>
       </ButtonGroup>
 
-      <Button pill color="alternative" on:click={toggleMetronome}>
+      <Button
+        pill
+        color="alternative"
+        disabled={!wsOpen}
+        on:click={toggleMetronome}
+      >
         {#if running}
           <PauseSolid />
         {:else}
@@ -64,19 +77,19 @@
       </Button>
 
       <ButtonGroup>
-        <Button on:click={() => volumeInc(1)}>+1</Button>
-        <Button on:click={() => volumeInc(10)}>+10</Button>
+        <Button disabled={!wsOpen} on:click={() => volumeInc(1)}>+1</Button>
+        <Button disabled={!wsOpen} on:click={() => volumeInc(10)}>+10</Button>
       </ButtonGroup>
     </div>
   </div>
 
   <div id="volume-control" class="control">
     <Dial label="Volume" value={volume} />
-    <Range bind:value={volume} />
+    <Range disabled={!wsOpen} bind:value={volume} />
   </div>
 
   <div id="beats-control" class="control">
     <Dial label="Beats" value={beats} />
-    <Range min="1" max="8" bind:value={beats} />
+    <Range min="1" max="8" disabled={!wsOpen} bind:value={beats} />
   </div>
 </div>
