@@ -49,11 +49,14 @@
   const volumeDec = (n: number) => (bpm = Math.max(50, bpm - n));
 
   function toggleMetronome() {
-    fetch(`http://metronome.local/${running ? "stop" : "start"}`, {
+    running = !running;
+    fetch(`http://metronome.local/${running ? "start" : "stop"}`, {
       method: "PATCH",
     }).then((resp) => {
-      console.log(resp);
-      if (resp.status === 200) running = !running;
+      // Return to previous state if the toggle failed
+      if (!resp.ok) {
+        running = !running;
+      }
     });
   }
 </script>
