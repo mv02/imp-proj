@@ -28,7 +28,6 @@
 
   ws.onmessage = (e) => {
     let data = JSON.parse(e.data);
-    console.log(data);
     ({ bpm, volume, beats } = data);
   };
 
