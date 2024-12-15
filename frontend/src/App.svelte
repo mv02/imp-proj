@@ -6,8 +6,8 @@
 
 <script lang="ts">
   import "./app.css";
-  import { Button, ButtonGroup, Range } from "flowbite-svelte";
   import metronomeImage from "./assets/metronome.svg";
+  import { Button, ButtonGroup, Range } from "flowbite-svelte";
   import { PlaySolid, PauseSolid } from "flowbite-svelte-icons";
   import Dial from "./components/Dial.svelte";
 
