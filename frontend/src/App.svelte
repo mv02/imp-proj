@@ -7,6 +7,7 @@
 <script lang="ts">
   import "./app.css";
   import { Button, ButtonGroup, Range } from "flowbite-svelte";
+  import metronomeImage from "./assets/metronome.svg";
   import { PlaySolid, PauseSolid } from "flowbite-svelte-icons";
   import Dial from "./components/Dial.svelte";
 
@@ -59,7 +60,11 @@
   }
 </script>
 
-<div class="grid grid-cols-2 grid-rows-2 items-end gap-8">
+<div class="grid gap-8">
+  <div id="image" class="col-span-2 flex justify-center">
+    <img src={metronomeImage} alt="Metronome" class="w-24" />
+  </div>
+
   <div id="bpm-control" class="control col-span-2">
     <Dial label="BPM" value={bpm} />
     <Range size="lg" min="50" max="250" disabled={!wsOpen} bind:value={bpm} />
