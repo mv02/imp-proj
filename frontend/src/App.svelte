@@ -15,7 +15,6 @@
   let bpm: number;
   let volume: number;
   let beats: number;
-  let periodMs: number;
 
   let ws = new WebSocket("http://metronome.local/ws");
   ws.onopen = () => {
@@ -30,7 +29,7 @@
   ws.onmessage = (e) => {
     let data = JSON.parse(e.data);
     console.log(data);
-    ({ bpm, volume, beats, periodMs } = data);
+    ({ bpm, volume, beats } = data);
   };
 
   let wsOpen = false;
