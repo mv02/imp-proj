@@ -21,6 +21,9 @@
 
 static const char* TAG = "http";
 
+static httpd_handle_t ws_handle;
+static int ws_fd;
+
 static void fs_init()
 {
     // Iniitialize and mount the filesystem partition
@@ -68,6 +71,13 @@ static esp_err_t ws_send_message(httpd_req_t* req, const char* message)
 static esp_err_t ws_handler(httpd_req_t* req)
 {
     if (req->method == HTTP_GET) {
+        ws_handle = req->handle;
+        ws_fd = httpd_req_to_sockfd(req);
+
+        char* json = metronome_status_json();
+        ESP_LOGI(TAG, "%s", json);
+        ESP_ERROR_CHECK(ws_send_message(req, json));
+
         ESP_LOGI(TAG, "ws handshake done");
         return ESP_OK;
     }
@@ -106,9 +116,6 @@ static esp_err_t ws_handler(httpd_req_t* req)
 
         free(buf);
     }
-
-    // TODO: remove
-    ESP_ERROR_CHECK(ws_send_message(req, "Response"));
 
     return ESP_OK;
 }

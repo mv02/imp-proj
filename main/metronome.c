@@ -5,6 +5,7 @@
  */
 
 #include "metronome.h"
+#include "cJSON.h"
 #include "driver/gpio.h"
 #include "driver/ledc.h"
 #include "esp_err.h"
@@ -13,14 +14,17 @@
 #include "freertos/projdefs.h"
 #include "hal/ledc_types.h"
 #include "portmacro.h"
+#include "server.h"
 
 static const char* TAG = "metronome";
 
 static bool running = true;
 
+static int current_bpm;
 static int period_ms;
 static int beat_length_ms;
 static int accent_beat_length_ms;
+static int current_volume;
 static int current_beats;
 
 void pwm_init()
@@ -59,6 +63,7 @@ void metronome_init()
 void metronome_set_bpm(unsigned int bpm)
 {
     ESP_LOGI(TAG, "setting bpm to %d", bpm);
+    current_bpm = bpm;
     // Calculate period from beats per minute
     period_ms = 60 * 1000 / bpm;
     ESP_LOGI(TAG, "period: %d ms", period_ms);
@@ -71,6 +76,7 @@ void metronome_set_bpm(unsigned int bpm)
 void metronome_set_volume(unsigned int volume)
 {
     ESP_LOGI(TAG, "setting volume to %d", volume);
+    current_volume = volume;
     // Quadratic scaling
     int duty = PWM_MAX_DUTY * (volume / 100.0) * (volume / 100.0);
     ESP_LOGI(TAG, "duty: %d", duty);
@@ -123,4 +129,15 @@ void metronome_stop()
 {
     ESP_LOGI(TAG, "stopping");
     running = false;
+}
+
+char* metronome_status_json()
+{
+    cJSON* json = cJSON_CreateObject();
+    cJSON_AddNumberToObject(json, "bpm", current_bpm);
+    cJSON_AddNumberToObject(json, "periodMs", period_ms);
+    cJSON_AddNumberToObject(json, "volume", current_volume);
+    cJSON_AddNumberToObject(json, "beats", current_beats);
+    char* jsonString = cJSON_Print(json);
+    return jsonString;
 }

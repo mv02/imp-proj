@@ -22,3 +22,4 @@ void metronome_stop();
 void metronome_set_bpm(unsigned int bpm);
 void metronome_set_volume(unsigned int volume);
 void metronome_set_beats(unsigned int beats);
+char* metronome_status_json();

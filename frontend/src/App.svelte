@@ -11,9 +11,10 @@
   import Dial from "./components/Dial.svelte";
 
   let running = true;
-  let bpm = 120;
-  let volume = 50;
-  let beats = 4;
+  let bpm: number;
+  let volume: number;
+  let beats: number;
+  let periodMs: number;
 
   let ws = new WebSocket("http://metronome.local/ws");
   ws.onopen = () => {
@@ -25,17 +26,23 @@
     console.log("WS disconnected");
   };
 
+  ws.onmessage = (e) => {
+    let data = JSON.parse(e.data);
+    console.log(data);
+    ({ bpm, volume, beats, periodMs } = data);
+  };
+
   let wsOpen = ws.readyState === WebSocket.OPEN;
 
-  $: if (wsOpen) {
+  $: if (wsOpen && bpm) {
     ws.send(`bpm:${bpm}`);
   }
 
-  $: if (wsOpen) {
+  $: if (wsOpen && volume) {
     ws.send(`vol:${volume}`);
   }
 
-  $: if (wsOpen) {
+  $: if (wsOpen && beats) {
     ws.send(`bts:${beats}`);
   }
 
