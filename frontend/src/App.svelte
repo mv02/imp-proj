@@ -33,7 +33,7 @@
     ({ bpm, volume, beats, periodMs } = data);
   };
 
-  let wsOpen = ws.readyState === WebSocket.OPEN;
+  let wsOpen = false;
 
   $: if (wsOpen && bpm) {
     ws.send(`bpm:${bpm}`);
