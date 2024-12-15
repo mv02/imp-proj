@@ -21,7 +21,7 @@ static bool running = true;
 static int period_ms;
 static int beat_length_ms;
 static int accent_beat_length_ms;
-static int beats;
+static int current_beats;
 
 void pwm_init()
 {
@@ -78,10 +78,10 @@ void metronome_set_volume(unsigned int volume)
     ledc_update_duty(PWM_SPEED_MODE, PWM_CHANNEL);
 }
 
-void metronome_set_beats(unsigned int bts)
+void metronome_set_beats(unsigned int beats)
 {
-    ESP_LOGI(TAG, "setting beats to %d", bts);
-    beats = bts;
+    ESP_LOGI(TAG, "setting beats to %d", beats);
+    current_beats = beats;
 }
 
 static void metronome_beat(bool accent)
@@ -103,8 +103,8 @@ void metronome_loop()
             continue;
         }
 
-        metronome_beat(beats > 1);
-        for (int i = 1; i < beats; i++) {
+        metronome_beat(current_beats > 1);
+        for (int i = 1; i < current_beats; i++) {
             if (!running) {
                 break;
             }
