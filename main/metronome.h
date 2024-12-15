@@ -13,7 +13,7 @@
 #define PWM_TIMER LEDC_TIMER_0
 #define PWM_FREQUENCY 3500
 #define PWM_DUTY_RES LEDC_TIMER_13_BIT
-#define PWM_MAX_DUTY 6144 // 75 % of 2 ** 13
+#define PWM_MAX_DUTY 4096 // 50 % of 2 ** 13
 
 void metronome_init();
 void metronome_loop();
