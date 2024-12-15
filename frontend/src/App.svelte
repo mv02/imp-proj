@@ -11,7 +11,7 @@
   import { PlaySolid, PauseSolid } from "flowbite-svelte-icons";
   import Dial from "./components/Dial.svelte";
 
-  let running = true;
+  let running: boolean;
   let bpm: number;
   let volume: number;
   let beats: number;
@@ -28,7 +28,7 @@
 
   ws.onmessage = (e) => {
     let data = JSON.parse(e.data);
-    ({ bpm, volume, beats } = data);
+    ({ running, bpm, volume, beats } = data);
   };
 
   let wsOpen = false;

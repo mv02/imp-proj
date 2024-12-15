@@ -134,6 +134,7 @@ void metronome_stop()
 char* metronome_status_json()
 {
     cJSON* json = cJSON_CreateObject();
+    cJSON_AddBoolToObject(json, "running", running);
     cJSON_AddNumberToObject(json, "bpm", current_bpm);
     cJSON_AddNumberToObject(json, "volume", current_volume);
     cJSON_AddNumberToObject(json, "beats", current_beats);
