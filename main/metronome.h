@@ -16,7 +16,9 @@
 #define PWM_MAX_DUTY 6144 // 75 % of 2 ** 13
 
 void metronome_init();
+void metronome_loop();
 void metronome_start();
+void metronome_stop();
 void metronome_set_bpm(unsigned int bpm);
 void metronome_set_volume(unsigned int volume);
 void metronome_set_beats(unsigned int beats);

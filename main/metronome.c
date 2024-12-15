@@ -10,10 +10,13 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "freertos/idf_additions.h"
+#include "freertos/projdefs.h"
 #include "hal/ledc_types.h"
 #include "portmacro.h"
 
 static const char* TAG = "metronome";
+
+static bool running = true;
 
 static int period_ms;
 static int beat_length_ms;
@@ -92,12 +95,29 @@ static void metronome_beat(bool accent)
     vTaskDelay((period_ms - beat_len) / portTICK_PERIOD_MS);
 }
 
-void metronome_start()
+void metronome_loop()
 {
     while (1) {
+        if (!running) {
+            vTaskDelay(pdMS_TO_TICKS(100));
+            continue;
+        }
+
         metronome_beat(beats > 1);
         for (int i = 1; i < beats; i++) {
             metronome_beat(false);
         }
     }
+}
+
+void metronome_start()
+{
+    ESP_LOGI(TAG, "starting");
+    running = true;
+}
+
+void metronome_stop()
+{
+    ESP_LOGI(TAG, "stopping");
+    running = false;
 }

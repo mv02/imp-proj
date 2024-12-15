@@ -5,6 +5,7 @@
  */
 
 #include "esp_err.h"
+#include "freertos/idf_additions.h"
 #include "metronome.h"
 #include "nvs_flash.h"
 #include "server.h"
@@ -17,5 +18,5 @@ void app_main()
     server_init();
 
     metronome_init();
-    metronome_start();
+    xTaskCreate(metronome_loop, "metronome_task", 2048, NULL, 5, NULL);
 }

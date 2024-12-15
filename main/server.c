@@ -192,6 +192,20 @@ static esp_err_t set_volume_patch_handler(httpd_req_t* req)
     return ESP_OK;
 }
 
+static esp_err_t start_patch_handler(httpd_req_t* req)
+{
+    metronome_start();
+    httpd_resp_sendstr(req, "Metronome started");
+    return ESP_OK;
+}
+
+static esp_err_t stop_patch_handler(httpd_req_t* req)
+{
+    metronome_stop();
+    httpd_resp_sendstr(req, "Metronome stopped");
+    return ESP_OK;
+}
+
 static const httpd_uri_t ws_uri = {
     .uri = "/ws",
     .method = HTTP_GET,
@@ -203,6 +217,18 @@ static const httpd_uri_t get_uri = {
     .uri = "/*",
     .method = HTTP_GET,
     .handler = get_handler,
+};
+
+static const httpd_uri_t start_patch_uri = {
+    .uri = "/start",
+    .method = HTTP_PATCH,
+    .handler = start_patch_handler,
+};
+
+static const httpd_uri_t stop_patch_uri = {
+    .uri = "/stop",
+    .method = HTTP_PATCH,
+    .handler = stop_patch_handler,
 };
 
 static const httpd_uri_t set_bpm_patch_uri = {
@@ -234,6 +260,8 @@ void server_init()
     ESP_LOGI(TAG, "Registering URI handlers");
     httpd_register_uri_handler(server, &ws_uri);
     httpd_register_uri_handler(server, &get_uri);
+    httpd_register_uri_handler(server, &start_patch_uri);
+    httpd_register_uri_handler(server, &stop_patch_uri);
     httpd_register_uri_handler(server, &set_bpm_patch_uri);
     httpd_register_uri_handler(server, &set_volume_patch_uri);
 }

@@ -7,8 +7,10 @@
 <script lang="ts">
   import "./app.css";
   import { Button, ButtonGroup, Range } from "flowbite-svelte";
+  import { PlaySolid, PauseSolid } from "flowbite-svelte-icons";
   import Dial from "./components/Dial.svelte";
 
+  let running = true;
   let bpm = 120;
   let volume = 50;
   let beats = 4;
@@ -31,6 +33,15 @@
 
   const volumeInc = (n: number) => (bpm = Math.min(250, bpm + n));
   const volumeDec = (n: number) => (bpm = Math.max(50, bpm - n));
+
+  function toggleMetronome() {
+    fetch(`http://metronome.local/${running ? "stop" : "start"}`, {
+      method: "PATCH",
+    }).then((resp) => {
+      console.log(resp);
+      if (resp.status === 200) running = !running;
+    });
+  }
 </script>
 
 <div class="grid grid-cols-2 grid-rows-2 items-end gap-8">
@@ -43,6 +54,15 @@
         <Button on:click={() => volumeDec(10)}>-10</Button>
         <Button on:click={() => volumeDec(1)}>-1</Button>
       </ButtonGroup>
+
+      <Button pill color="alternative" on:click={toggleMetronome}>
+        {#if running}
+          <PauseSolid />
+        {:else}
+          <PlaySolid />
+        {/if}
+      </Button>
+
       <ButtonGroup>
         <Button on:click={() => volumeInc(1)}>+1</Button>
         <Button on:click={() => volumeInc(10)}>+10</Button>
